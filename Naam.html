@@ -30,7 +30,7 @@
     }
 
     #chant-page {
-      background: url("99fe1e3af2e7e8fb024ea302f6f833aad.jpg") no-repeat center center/cover;
+      background: url("9fe1e3af2e7e8fb024ea302f6f833aad.jpg") no-repeat center center/cover;
     }
 
     #chant-page::before {
@@ -214,14 +214,13 @@
     <p>Enter the name of the God/Goddess:</p>
     <input type="text" id="god-name" placeholder="Enter name" />
 
-    <p>Tap anywhere or the sacred circle to chant</p>
+    <p>Tap only the sacred circle to chant</p>
     <h2 id="chant-text">हरे कृष्ण हरे राम</h2>
     <h3>Hare Krishna Hare Rama</h3>
 
     <div id="chant-btn" class="circle">ॐ</div>
 
     <div class="buttons">
-      <button onclick="enableSound()">Enable Sound</button>
       <button onclick="showProgress()">View Progress</button>
     </div>
 
@@ -271,15 +270,7 @@
     const godNameInput = document.getElementById("god-name");
 
     document.getElementById("chant-btn").addEventListener("click", chantOnce);
-    document.body.addEventListener("click", function(e){
-      if(!e.target.closest("button") && !e.target.closest("#chant-btn")){
-        chantOnce();
-      }
-    });
 
-    function enableSound(){
-      chantSound.play().catch(()=>{});
-    }
 
     function chantOnce(){
       chants++;
