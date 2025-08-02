@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Divine Chanting</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      transition: transform 0.7s ease-in-out;
+    }
+    .hidden {
+      transform: translateX(100%);
+    }
+
+    #chant-page {
+      background: url("9fe1e3af2e7e8fb024ea302f6f833aad.jpg") no-repeat center center/cover;
+    }
+
+    #chant-page::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    #chant-page > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    #progress-page {
+      background: linear-gradient(purple, indigo);
+      transition: background 1s ease-in-out;
+    }
+
+    .circle {
+      background-color: rgba(102, 51, 153, 0.9);
+      color: white;
+      font-size: 3rem;
+      width: 150px;
+      height: 150px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      margin: 20px 0;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(255,255,255,0.5);
+      transition: transform 0.1s ease-in-out;
+    }
+    .circle:active {
+      transform: scale(0.95);
+    }
+
+    .circle .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.6);
+      transform: scale(0);
+      animation: ripple 0.6s linear;
+      pointer-events: none;
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    button {
+      background-color: rgba(255, 165, 0, 0.85);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      background-color: rgba(255, 140, 0, 0.95);
+      transform: scale(1.05);
+    }
+
+    .marquee {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      box-sizing: border-box;
+      animation: marquee 12s linear infinite;
+      font-size: 1.2rem;
+      margin-top: 10px;
+      color: #ffeb3b;
+      text-shadow: 0 0 10px rgba(0,0,0,0.8);
+    }
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    h1, h2, h3, p, span {
+      text-shadow: 0 0 10px rgba(0,0,0,0.8);
+    }
+    h1 {
+      animation: fadeSlide 2s ease-in-out;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .counters {
+      display: flex;
+      gap: 15px;
+      margin: 15px 0;
+    }
+    .counter-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      font-size: 1.1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .counter-box:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255,255,255,0.4);
+    }
+
+    #god-name {
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+    }
+    p {
+      color: gold;
+      font-weight: bold;
+    }
+
+    .divine-message {
+      display: none;
+      animation: fadeIn 1s ease-in-out;
+      margin-top: 20px;
+      font-size: 1.5rem;
+      color: gold;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .achievement-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .achievement-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+      min-width: 150px;
+      font-size: 1.1rem;
+    }
+    .achievement-box:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255,255,255,0.4);
+    }
+  </style>
+</head>
+<body>
+  <audio id="chant-sound" src="https://cdn.pixabay.com/download/audio/2021/09/02/audio_5f7b05ddf0.mp3?filename=om-mantra-110105.mp3" preload="auto"></audio>
+  <audio id="bell-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-meditation-bell-1727.mp3" preload="auto"></audio>
+
+  <div id="chant-page" class="page">
+    <h1>ॐ Divine Chanting ॐ</h1>
+    <div class="marquee">✨ Chant the name of God & Goddess with devotion ✨</div>
+
+    <div class="counters">
+      <div class="counter-box">Chants: <span id="chants">0</span></div>
+      <div class="counter-box">Malas: <span id="malas">0</span></div>
+      <div class="counter-box">Remaining: <span id="remaining">108</span></div>
+    </div>
+
+    <p>Enter the name of the God/Goddess:</p>
+    <input type="text" id="god-name" placeholder="Enter name" />
+
+    <p>Tap anywhere or the sacred circle to chant</p>
+    <h2 id="chant-text">हरे कृष्ण हरे राम</h2>
+    <h3>Hare Krishna Hare Rama</h3>
+
+    <div id="chant-btn" class="circle">ॐ</div>
+
+    <div class="buttons">
+      <button onclick="enableSound()">Enable Sound</button>
+      <button onclick="showProgress()">View Progress</button>
+    </div>
+
+    <div class="divine-message" id="divine-message">You have completed your chanting! May blessings be upon you!</div>
+  </div>
+
+  <div id="progress-page" class="page hidden">
+    <button onclick="showChantPage()">← Back to Chanting</button>
+    <h2>Spiritual Progress</h2>
+
+    <div class="stats">
+      <p>Total Chants: <span id="total-chants">0</span></p>
+      <p>Completed Malas: <span id="completed-malas">0</span></p>
+      <p>Current Streak: <span id="streak">0</span></p>
+    </div>
+
+    <h3>Current Mala Progress</h3>
+    <progress id="progress-bar" value="0" max="108"></progress>
+
+    <h3>Spiritual Achievements</h3>
+    <div class="achievement-container">
+      <div class="achievement-box">ॐ First Steps - 1 Mala</div>
+      <div class="achievement-box">🙏 Dedicated - 10 Malas</div>
+      <div class="achievement-box">🌸 Devotee - 50 Malas</div>
+      <div class="achievement-box">✨ Enlightened - 108 Malas</div>
+      <div class="achievement-box">🔥 Master - 500 Malas</div>
+    </div>
+  </div>
+
+  <script>
+    let chants = 0;
+    let malas = 0;
+    let chantsPerMala = 108;
+    let totalChants = 0;
+
+    const chantSound = document.getElementById("chant-sound");
+    const bellSound = document.getElementById("bell-sound");
+
+    const chantEl = document.getElementById("chants");
+    const malasEl = document.getElementById("malas");
+    const remainingEl = document.getElementById("remaining");
+    const totalChantsEl = document.getElementById("total-chants");
+    const completedMalasEl = document.getElementById("completed-malas");
+    const progressBar = document.getElementById("progress-bar");
+    const progressPage = document.getElementById("progress-page");
+    const divineMessage = document.getElementById("divine-message");
+    const godNameInput = document.getElementById("god-name");
+
+    document.getElementById("chant-btn").addEventListener("click", chantOnce);
+    document.body.addEventListener("click", function(e){
+      if(!e.target.closest("button") && !e.target.closest("#chant-btn")){
+        chantOnce();
+      }
+    });
+
+    function enableSound(){
+      chantSound.play().catch(()=>{});
+    }
+
+    function chantOnce(){
+      chants++;
+      totalChants++;
+
+      // Ripple effect on circle
+      const circle = document.getElementById("chant-btn");
+      const ripple = document.createElement("span");
+      ripple.className = "ripple";
+      let rect = circle.getBoundingClientRect();
+      ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+      ripple.style.left = (event.clientX - rect.left - rect.width/2) + 'px';
+      ripple.style.top = (event.clientY - rect.top - rect.height/2) + 'px';
+      circle.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+
+      chantEl.textContent = chants;
+      remainingEl.textContent = chantsPerMala - chants;
+      malasEl.textContent = malas;
+      totalChantsEl.textContent = totalChants;
+      completedMalasEl.textContent = malas;
+      progressBar.value = chants;
+
+      bellSound.currentTime = 0;
+      bellSound.play().then(() => {
+        chantSound.currentTime = 0;
+        chantSound.play();
+      });
+
+      const godName = godNameInput.value || "ॐ";
+      const utterance = new SpeechSynthesisUtterance(godName);
+      speechSynthesis.speak(utterance);
+
+      if(chants >= chantsPerMala){
+        malas++;
+        chants = 0;
+        malasEl.textContent = malas;
+        completedMalasEl.textContent = malas;
+        remainingEl.textContent = chantsPerMala;
+        progressBar.value = 0;
+        changeProgressColor();
+        showDivineMessage();
+      }
+    }
+
+    function showDivineMessage() {
+      bellSound.currentTime = 0;
+      bellSound.play();
+      divineMessage.style.display = 'block';
+      divineMessage.textContent = `ॐ Congratulations! Completed ${malas} malas of ${chantsPerMala} chants! ॐ`;
+      document.getElementById("chant-page").style.background = "linear-gradient(gold, orange)";
+      setTimeout(() => {
+        document.getElementById("chant-page").style.background = "";
+      }, 3000);
+    }
+
+    function showProgress() {
+      document.getElementById("chant-page").classList.add("hidden");
+      progressPage.classList.remove("hidden");
+    }
+
+    function showChantPage() {
+      progressPage.classList.add("hidden");
+      document.getElementById("chant-page").classList.remove("hidden");
+    }
+
+    function changeProgressColor(){
+      const colors = ["linear-gradient(purple, indigo)", "linear-gradient(teal, navy)", "linear-gradient(darkred, black)", "linear-gradient(green, darkgreen)"];
+      const index = malas % colors.length;
+      progressPage.style.background = colors[index];
+    }
+  </script>
+</body>
+</html>
